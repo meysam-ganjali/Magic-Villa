@@ -108,7 +108,7 @@ namespace MagicVilla_Api.Controllers {
             }
 
             await _villaRepository.UpdateAsync(mappToVilla);
-            return Ok(villa);
+            return Ok(villaDto);
         }
     }
 }
