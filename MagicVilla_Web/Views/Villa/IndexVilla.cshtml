@@ -1,0 +1,26 @@
+﻿@model List<MagicVilla_Web.Models.DTOs.VillaDto>
+<div class="row">
+    <table class="table table-bordered">
+        <tr>
+            <td>#</td>
+            <td>Name</td>
+            <td>Details</td>
+            <td>Rate</td>
+            <td>Sqft</td>
+            <td>Occupancy</td>
+            <td>Amenity</td>
+        </tr>
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td>@v.Id</td>
+                <td>@v.Name</td>
+                <td>@v.Details</td>
+                <td>@v.Rate</td>
+                <td>@v.Sqft</td>
+                <td>@v.Occupancy</td>
+                <td>@v.Amenity</td>
+            </tr>
+        }
+    </table>
+</div>
