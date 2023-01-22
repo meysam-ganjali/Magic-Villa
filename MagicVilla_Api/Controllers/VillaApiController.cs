@@ -16,11 +16,13 @@ namespace MagicVilla_Api.Controllers {
 
         private ILogger<VillaApiController> _logger;
         private readonly IVillaRepository _villaRepository;
+        private IMapper _mapper;
 
-        public VillaApiController(ILogger<VillaApiController> logger, IVillaRepository villaRepository)
+        public VillaApiController(ILogger<VillaApiController> logger, IVillaRepository villaRepository, IMapper mapper)
         {
             _logger = logger;
             _villaRepository = villaRepository;
+            _mapper = mapper;
         }
         [HttpGet(Name = "GetVillas")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -45,7 +47,7 @@ namespace MagicVilla_Api.Controllers {
                 return BadRequest();
             }
 
-            var villa = await _villaRepository.GetAsync(id);
+            var villa = await _villaRepository.GetAsync(x => x.Id == id);
             if (villa == null) {
                 _logger.LogError($"{id} No Exist In Data Base");
                 return NotFound();
@@ -61,12 +63,8 @@ namespace MagicVilla_Api.Controllers {
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> CreateVilla([FromBody] VillaCreateDTO villaDto)
         {
-            var result = await _villaRepository.CreateAsync(villaDto);
-            if (result == null)
-            {
-                _logger.LogError($"Parameter InValid ( BadRequest )");
-                return BadRequest();
-            }
+            var mappToVilla = _mapper.Map<Villa>(villaDto);
+            await _villaRepository.CreateAsync(mappToVilla);
             _logger.LogInformation($"Add Successed Villa");
             return Ok(villaDto);
         }
@@ -82,15 +80,17 @@ namespace MagicVilla_Api.Controllers {
                 return BadRequest();
             }
 
-            bool isSuccess = await _villaRepository.RemoverAsync(id);
+            var villa = await _villaRepository.GetAsync(x => x.Id == id);
 
-            if (!isSuccess) {
-                _logger.LogError($"Remove Villa Faild {isSuccess}");
-                return BadRequest(isSuccess);
+            if (villa == null) {
+                _logger.LogError($"Villa {id} Not Found");
+                return NotFound();
             }
-            _logger.LogInformation($"Villa {id} Removeed From DataBase");
 
-            return Ok(isSuccess);
+            await _villaRepository.RemoveAsync(villa);
+            _logger.LogInformation($"Villa {villa.Id} Removeed From DataBase");
+
+            return Ok();
         }
 
 
@@ -98,18 +98,16 @@ namespace MagicVilla_Api.Controllers {
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateVillas([FromBody] VillaUpdateDTO villaDto) {
-            if (villaDto.Id == 0) {
-                _logger.LogError("Id Equal 0 Not Found In DataBase");
-                return BadRequest();
-            }
-
-            var villa = await _villaRepository.UpdateAsync(villaDto);
+        public async Task<IActionResult> UpdateVillas([FromBody] VillaUpdateDTO villaDto)
+        {
+            var mappToVilla = _mapper.Map<Villa>(villaDto);
+            var villa = await _villaRepository.GetAsync(x => x.Id == villaDto.Id,tracked:false);
             if (villa == null) {
-                _logger.LogError("Update Vila Is Faild");
-                return BadRequest();
+                _logger.LogError(" Villa NotFound");
+                return NotFound();
             }
 
+            await _villaRepository.UpdateAsync(mappToVilla);
             return Ok(villa);
         }
     }
