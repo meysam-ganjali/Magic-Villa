@@ -1,5 +1,7 @@
 using MagicVilla_Api;
 using MagicVilla_Api.Data;
+using MagicVilla_Api.Repository;
+using MagicVilla_Api.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -19,6 +21,7 @@ builder.Services.AddDbContext<DataBaseContext>(o =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+builder.Services.AddScoped<IVillaRepository, VillaRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
