@@ -1,26 +1,43 @@
-﻿@model List<MagicVilla_Web.Models.DTOs.VillaDto>
-<div class="row">
-    <table class="table table-bordered">
+﻿@model IEnumerable<MagicVilla_Web.Models.DTOs.VillaDto>
+<br />
+<div class="container p-4 border">
+    <div class="row pb-2">
+        <div class="col">
+            <h1 class="text-primary">Villa List</h1>
+        </div>
+        <div class="col text-end pt-1">
+            <a asp-controller="Villa" asp-action="CreateVilla"  class="btn btn-outline-primary"><i class="bi bi-plus-square-fill"></i> Create New Villa</a>
+        </div>
+    </div>
+
+    <table class="table">
+        <thead>
         <tr>
-            <td>#</td>
-            <td>Name</td>
-            <td>Details</td>
-            <td>Rate</td>
-            <td>Sqft</td>
-            <td>Occupancy</td>
-            <td>Amenity</td>
+            <th>
+                Name
+            </th>
+            <th>
+                Occupany
+            </th>
+            <th>
+                Price
+            </th>
+            <th></th>
         </tr>
-        @foreach (var v in Model)
-        {
+        </thead>
+        <tbody>
+        @foreach(var item in Model){
             <tr>
-                <td>@v.Id</td>
-                <td>@v.Name</td>
-                <td>@v.Details</td>
-                <td>@v.Rate</td>
-                <td>@v.Sqft</td>
-                <td>@v.Occupancy</td>
-                <td>@v.Amenity</td>
+                <td>@item.Name</td>
+                <td>@item.Occupancy</td>
+                <td>@((item.Rate).ToString("c"))</td>
+                <td>
+                    <a asp-controller="Villa"  asp-route-villaId="@item.Id" class="btn btn-success"><i class="bi bi-pencil-square"></i></a>
+                    <a asp-controller="Villa"  asp-route-villaId="@item.Id"  class="btn btn-danger"><i class="bi bi-trash-fill"></i></a>
+                </td>
             </tr>
         }
+        </tbody>
     </table>
+
 </div>
