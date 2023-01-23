@@ -8,22 +8,18 @@ using Newtonsoft.Json;
 using System.Reflection;
 
 namespace MagicVilla_Web.Controllers {
-    public class VillaController : Controller
-    {
+    public class VillaController : Controller {
         private readonly IVillaService _villaService;
         private IMapper _mapper;
 
-        public VillaController(IVillaService villaService, IMapper mapper)
-        {
+        public VillaController(IVillaService villaService, IMapper mapper) {
             _villaService = villaService;
             _mapper = mapper;
         }
-        public async Task<IActionResult> IndexVilla()
-        {
+        public async Task<IActionResult> IndexVilla() {
             List<VillaDto> list = new();
             var response = await _villaService.GetAllAsync<APIResponse>();
-            if (response != null && response.IsSuccess)
-            {
+            if (response != null && response.IsSuccess) {
                 list = JsonConvert.DeserializeObject<List<VillaDto>>(Convert.ToString(response.Result));
             }
             return View(list);
@@ -45,12 +41,10 @@ namespace MagicVilla_Web.Controllers {
             TempData["error"] = "Error encountered.";
             return View(model);
         }
-      
-        public async Task<IActionResult> UpdateVilla(int id)
-        {
+
+        public async Task<IActionResult> UpdateVilla(int id) {
             var villa = await _villaService.GetAsync<APIResponse>(id);
-            if (villa != null && villa.IsSuccess)
-            {
+            if (villa != null && villa.IsSuccess) {
                 VillaDto model = JsonConvert.DeserializeObject<VillaDto>(Convert.ToString(villa.Result));
                 return View(_mapper.Map<VillaUpdateDTO>(model));
             }
@@ -63,12 +57,23 @@ namespace MagicVilla_Web.Controllers {
 
                 var response = await _villaService.UpdateAsync<APIResponse>(model);
                 if (response != null && response.IsSuccess) {
-                    TempData["success"] = "Villa created successfully";
+                    TempData["success"] = "Villa Update successfully";
                     return RedirectToAction(nameof(IndexVilla));
                 }
             }
             TempData["error"] = "Error encountered.";
             return View(model);
+        }
+
+        public async Task<IActionResult> DeleteVilla(int id) {
+
+            var response = await _villaService.DeleteAsync<APIResponse>(id);
+            if (response != null && response.IsSuccess) {
+                TempData["success"] = "Villa Delete successfully";
+                return RedirectToAction(nameof(IndexVilla));
+            }
+            TempData["error"] = "Error encountered.";
+            return RedirectToAction(nameof(IndexVilla));
         }
     }
 }

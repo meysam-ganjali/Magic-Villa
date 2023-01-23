@@ -33,7 +33,7 @@
                 <td>@((item.Rate).ToString("c"))</td>
                 <td>
                     <a asp-controller="Villa" asp-action="UpdateVilla"  asp-route-id="@item.Id" class="btn btn-success"><i class="bi bi-pencil-square"></i></a>
-                    <a asp-controller="Villa"  asp-route-id="@item.Id"  class="btn btn-danger"><i class="bi bi-trash-fill"></i></a>
+                    <a asp-controller="Villa" asp-action="DeleteVilla"  asp-route-id="@item.Id"  class="btn btn-danger"><i class="bi bi-trash-fill"></i></a>
                 </td>
             </tr>
         }
