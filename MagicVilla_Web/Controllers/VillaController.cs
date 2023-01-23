@@ -5,6 +5,7 @@ using MagicVilla_Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace MagicVilla_Web.Controllers {
     public class VillaController : Controller
@@ -36,6 +37,31 @@ namespace MagicVilla_Web.Controllers {
             if (ModelState.IsValid) {
 
                 var response = await _villaService.CreateAsync<APIResponse>(model);
+                if (response != null && response.IsSuccess) {
+                    TempData["success"] = "Villa created successfully";
+                    return RedirectToAction(nameof(IndexVilla));
+                }
+            }
+            TempData["error"] = "Error encountered.";
+            return View(model);
+        }
+      
+        public async Task<IActionResult> UpdateVilla(int id)
+        {
+            var villa = await _villaService.GetAsync<APIResponse>(id);
+            if (villa != null && villa.IsSuccess)
+            {
+                VillaDto model = JsonConvert.DeserializeObject<VillaDto>(Convert.ToString(villa.Result));
+                return View(_mapper.Map<VillaUpdateDTO>(model));
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVilla(VillaUpdateDTO model) {
+            if (ModelState.IsValid) {
+
+                var response = await _villaService.UpdateAsync<APIResponse>(model);
                 if (response != null && response.IsSuccess) {
                     TempData["success"] = "Villa created successfully";
                     return RedirectToAction(nameof(IndexVilla));
