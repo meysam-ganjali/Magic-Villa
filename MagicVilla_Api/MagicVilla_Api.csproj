@@ -26,7 +26,12 @@
   <ItemGroup>
     <Folder Include="Models\DTOs\" />
     <Folder Include="Data\" />
+    <Folder Include="wwwroot\" />
     <Folder Include="Repository\IRepository\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MagicVilla_Utility\MagicVilla_Utility.csproj" />
   </ItemGroup>
 
 </Project>

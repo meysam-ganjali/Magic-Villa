@@ -5,6 +5,7 @@ using AutoMapper;
 using MagicVilla_Api.Models;
 using MagicVilla_Api.Models.DTOs;
 using MagicVilla_Api.Repository.IRepository;
+using MagicVilla_Utility;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MagicVilla_Api.Controllers {
@@ -14,14 +15,17 @@ namespace MagicVilla_Api.Controllers {
 
         private ILogger<VillaApiController> _logger;
         private readonly IVillaRepository _dbVilla;
+        private Microsoft.AspNetCore.Hosting.IHostingEnvironment _environment;
+
         private IMapper _mapper;
         protected APIResponse _response;
 
-        public VillaApiController(ILogger<VillaApiController> logger, IVillaRepository dbVilla, IMapper mapper) {
+        public VillaApiController(ILogger<VillaApiController> logger, IVillaRepository dbVilla, IMapper mapper, Microsoft.AspNetCore.Hosting.IHostingEnvironment environment) {
             _logger = logger;
             _dbVilla = dbVilla;
             _mapper = mapper;
             _response = new APIResponse();
+            _environment = environment;
         }
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -98,6 +102,7 @@ namespace MagicVilla_Api.Controllers {
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<APIResponse>> CreateVilla([FromBody] VillaCreateDTO createDTO) {
             try {
+               
                 if (await _dbVilla.GetAsync(u => u.Name.ToLower() == createDTO.Name.ToLower()) != null) {
                     ModelState.AddModelError("ErrorMessages", "Villa already Exists!");
                     return BadRequest(ModelState);

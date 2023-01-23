@@ -29,7 +29,8 @@ namespace MagicVilla_Web.Controllers {
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateVilla(VillaCreateDTO model) {
+        public async Task<IActionResult> CreateVilla(VillaCreateDTO model)
+        {
             if (ModelState.IsValid) {
 
                 var response = await _villaService.CreateAsync<APIResponse>(model);
